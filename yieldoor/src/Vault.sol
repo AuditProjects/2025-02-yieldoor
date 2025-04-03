@@ -50,14 +50,14 @@ contract Vault is ERC20, Ownable {
         returns (uint256 shares, uint256 depositAmount0, uint256 depositAmount1)
     {
         IStrategy(strategy).collectFees();
-
+        // 当前strategy中的token0和token1的总余额
         (uint256 totalBalance0, uint256 totalBalance1) = IStrategy(strategy).balances();
-
+        // 获得股份、实际存入的token0和token1数量
         (shares, depositAmount0, depositAmount1) = _calcDeposit(totalBalance0, totalBalance1, amount0, amount1);
 
         IERC20(token0).safeTransferFrom(msg.sender, strategy, depositAmount0);
         IERC20(token1).safeTransferFrom(msg.sender, strategy, depositAmount1); // after deposit, funds remain idle, until compound is called
-
+        // 收取费用
         if (depositFee > 0) shares -= (shares * depositFee) / 10_000;
 
         require(shares > 0, "shares cant be 0");
@@ -86,7 +86,7 @@ contract Vault is ERC20, Ownable {
         (uint256 totalBalance0, uint256 totalBalance1) = IStrategy(strategy).balances();
 
         uint256 totalSupply = totalSupply();
-        _burn(msg.sender, shares);
+        _burn(msg.sender, shares);// 将 sharesr burning
 
         withdrawAmount0 = totalBalance0 * shares / totalSupply;
         withdrawAmount1 = totalBalance1 * shares / totalSupply;
@@ -149,7 +149,7 @@ contract Vault is ERC20, Ownable {
             shares = cross * totalSupply / bal0 / bal1;
         }
     }
-
+    
     /// @notice Adds a vesting position to the strategy
     /// @param amount0 The amount of token0 to be added as liquidity to the vesting position
     /// @param amount1 The amount of token1 to be added as liquidity to the vesitng positon

@@ -43,7 +43,7 @@ contract BaseTest is Test {
         assertEq(wbtc.balanceOf(user), 0);
         assertEq(usdc.balanceOf(user), 0);
 
-        vm.startPrank(rebalancer);
+        vm.startPrank(rebalancer);// rebalancer 是机器人账户
         skip(10 minutes);
         IStrategy(strategy).rebalance();
 
@@ -67,8 +67,8 @@ contract BaseTest is Test {
         IStrategy(strategy).rebalance();
 
         uint256 secLiq = IStrategy(strategy).getSecondaryPosition().liquidity;
-        require(secLiq > 0);
-        require(wbtc.balanceOf(strategy) < 10 || usdc.balanceOf(strategy) < 10);
+        require(secLiq > 0); // 条件
+        require(wbtc.balanceOf(strategy) < 10 || usdc.balanceOf(strategy) < 10); // 条件
     }
 
     function testDeposit() public {
